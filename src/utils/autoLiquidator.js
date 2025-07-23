@@ -21,6 +21,17 @@ async function liquidatePosition(client, userId, reason) {
     const netPnl = await applyFee(userId, pnl);
     const newBalance = wallet.balance + entryCost + netPnl;
     updateWallet(userId, newBalance);
+    await logTrade({
+    userId,
+    symbol: pos.symbol,
+    type: pos.type,
+    entryPrice: pos.entry,
+    exitPrice: currentPrice,
+    amount: pos.amount,
+    leverage: pos.leverage,
+    pnl,
+    timestamp: Math.floor(Date.now() / 1000)
+});
     deletePosition(userId);
 
     const user = await client.users.fetch(userId);
