@@ -32,13 +32,6 @@ async function handleLiquidate(interaction) {
   const currentPrice = await fetchPrice(pos.symbol);
 
   const wallet = getWallet(userId);
-
-    // 포지션 진입 시 증거금(원금)은 포지션 생성 시 차감했으니, 청산 시엔 원금과 손익 모두 더해줘야 함
-  //const entryCost = pos.amount * pos.entry / pos.leverage * pos.leverage; 
-    // 단, pos.amount는 코인 수량, pos.entry는 진입 가격, 레버리지는 곱해져 있으므로,
-    // pos.amount * pos.entry가 실제 USDT 투자 원금과 같음 (leverage는 곱할 필요 없음, 곱하면 금액이 과대 계산됨)
-
-    // 그러니 entryCost는 아래처럼 단순 계산 가능
   const entryCost = pos.amount * pos.entry / pos.leverage;
   let pnl = 0;
     
