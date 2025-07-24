@@ -10,8 +10,6 @@ async function monitorPositions(client) {
         if (!pos) continue;
 
         const currentPrice = await fetchPrice(pos.symbol);
-
-        // 📛 강제청산 가격 계산
         const entryPrice = pos.entry;
         const leverage = pos.leverage;
         const liquidationPrice =
@@ -19,7 +17,6 @@ async function monitorPositions(client) {
                 ? entryPrice - (entryPrice / leverage)
                 : entryPrice + (entryPrice / leverage);
 
-        // ⚠️ 강제청산 체크 (최우선 처리)
         if (
             (pos.type === 'LONG' && currentPrice <= liquidationPrice) ||
             (pos.type === 'SHORT' && currentPrice >= liquidationPrice)
