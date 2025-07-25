@@ -13,7 +13,8 @@ const {
 
 async function handleWallet(interaction) {
   const userId = interaction.user.id;
-  const wallet = getWallet(userId);
+  const guildId = interaction.guild.id
+  const wallet = getWallet(guildId, userId);
 
   const container = new ContainerBuilder()
     .addTextDisplayComponents(
