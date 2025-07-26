@@ -17,8 +17,8 @@ async function handleAttendance(interaction) {
     return;
   }
 
-  const reward = 100; // 지급할 USDT
-  const wallet = getWallet(userId);
+  const reward = 100;
+  const wallet = getWallet(guildId, userId);
 
   updateWallet(guildId, userId, wallet.balance + reward);
   setAttendanceToday(guildId, userId, today);

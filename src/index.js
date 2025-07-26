@@ -61,7 +61,8 @@ const commands = [
           .setRequired(true)
           .addChoices(
             { name: 'BTC', value: 'BTCUSDT' },
-            { name: 'ETH', value: 'ETHUSDT' }
+            { name: 'ETH', value: 'ETHUSDT' },
+            { name: 'SOL', value: 'SOLUSDT' }
           )
       )
       .addNumberOption(option =>
@@ -121,6 +122,7 @@ rest.put(Routes.applicationCommands(process.env.CLIENT_ID), { body: commands });
 
 client.once('ready', () => {
   console.log(`✅ 봇 로그인됨: ${client.user.tag}`);
+  client.user.setActivity('테스트모드', { type: 'PLAYING' });
   monitorPositions(client);
 });
 

@@ -31,6 +31,7 @@ async function handleBuy(interaction) {
 
   const price = await fetchPrice(symbol);
   const wallet = getWallet(guildId, userId);
+  const curntPosition = getPosition(guildId, userId);
 
   const amount = (usdtAmount * leverage) / price;
   const cost = usdtAmount;
