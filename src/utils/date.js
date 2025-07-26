@@ -1,5 +1,5 @@
 function formatDate(timestamp) {
-  const date = new Date(timestamp * 1000); // 초 → 밀리초 변환
+  const date = new Date(timestamp * 1000);
   return date.toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' });
 }
 

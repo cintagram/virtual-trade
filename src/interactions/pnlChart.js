@@ -5,13 +5,13 @@ const { formatDateShort } = require('../utils/date');
 
 async function execute(interaction) {
   const userId = interaction.user.id;
-
+  const guildId = interaction.guild.id;
   const trades = db.prepare(`
     SELECT * FROM trades
-    WHERE user_id = ?
+    WHERE user_id = ? AND guild_id = ?
     ORDER BY timestamp ASC
     LIMIT 7
-  `).all(userId);
+  `).all(userId, guildId);
 
   if (trades.length === 0) {
     return interaction.reply({

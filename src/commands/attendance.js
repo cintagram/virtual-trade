@@ -4,9 +4,10 @@ const { createEmbed } = require('../utils/embed');
 
 async function handleAttendance(interaction) {
   const userId = interaction.user.id;
-  const today = new Date().toISOString().slice(0, 10); // yyyy-mm-dd
+  const guildId = interaction.guild.id;
+  const today = new Date().toISOString().slice(0, 10); //yyyy-mm-dd
 
-  const lastDate = getLastAttendance(userId);
+  const lastDate = getLastAttendance(guildId, userId);
 
   if (lastDate === today) {
     await interaction.reply({
@@ -19,8 +20,8 @@ async function handleAttendance(interaction) {
   const reward = 100; // 지급할 USDT
   const wallet = getWallet(userId);
 
-  updateWallet(userId, wallet.balance + reward);
-  setAttendanceToday(userId, today);
+  updateWallet(guildId, userId, wallet.balance + reward);
+  setAttendanceToday(guildId, userId, today);
 
   await interaction.reply({
     embeds: [createEmbed('✅ 출석체크 완료', `

@@ -1,10 +1,8 @@
 const { fetchPrice } = require('../utils/fetchPrice');
 const { getWallet, updateWallet, setPosition, getPosition } = require('../db/database');
 const { createEmbed } = require('../utils/embed');
-const { applyFee } = require('../utils/fee');
 const {
   ContainerBuilder,
-  SectionBuilder,
   TextDisplayBuilder,
   ButtonBuilder,
   ButtonStyle,
@@ -16,8 +14,9 @@ const {
 
 async function handleBuy(interaction) {
   const userId = interaction.user.id;
+  const guildId = interaction.guild.id;
   const symbol = interaction.options.getString('코인');
-  const usdtAmount = interaction.options.getNumber('usdt');  // 변경
+  const usdtAmount = interaction.options.getNumber('usdt');
   const leverage = interaction.options.getInteger('레버리지') ?? 5;
 
   if (leverage < 1 || leverage > 100) {
@@ -31,12 +30,9 @@ async function handleBuy(interaction) {
   }
 
   const price = await fetchPrice(symbol);
-  const wallet = getWallet(userId);
+  const wallet = getWallet(guildId, userId);
 
-  // 실제 코인 수량 계산 (레버리지 포함)
   const amount = (usdtAmount * leverage) / price;
-
-  // 차감 금액은 usdtAmount 그대로 (포지션 증거금)
   const cost = usdtAmount;
 
   if (wallet.balance < cost) {
@@ -44,9 +40,9 @@ async function handleBuy(interaction) {
     return;
   }
 
-  updateWallet(userId, wallet.balance - cost);
+  updateWallet(guildId, userId, wallet.balance - cost);
 
-  setPosition(userId, {
+  setPosition(guildId, userId, {
     symbol,
     type: 'LONG',
     entry: price,
@@ -54,7 +50,7 @@ async function handleBuy(interaction) {
     leverage
   });
 
-  const pos = getPosition(userId);
+  const pos = getPosition(guildId, userId);
   const currentPrice = price;
   const pnl = pos.type === 'LONG'
     ? (currentPrice - pos.entry) * pos.amount * pos.leverage

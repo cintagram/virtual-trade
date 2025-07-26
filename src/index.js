@@ -33,11 +33,12 @@ const commands = [
     .setDescription('롱 포지션 진입 (잔고 차감)')
     .addStringOption(option =>
       option.setName('코인')
-        .setDescription('BTC 또는 ETH')
+        .setDescription('코인 종류')
         .setRequired(true)
         .addChoices(
           { name: 'BTC', value: 'BTCUSDT' },
-          { name: 'ETH', value: 'ETHUSDT' }
+          { name: 'ETH', value: 'ETHUSDT' },
+          { name: 'SOL', value: 'SOLUSDT' }
         )
     )
     .addNumberOption(option =>
@@ -104,7 +105,7 @@ const commands = [
   .setDescription('하루 1회 출석체크 후 보상 지급'),
     
   new SlashCommandBuilder().setName('포지션').setDescription('현재 내 포지션 확인'),
-  new SlashCommandBuilder().setName('help').setDescription('도움말 확인하기'),
+  new SlashCommandBuilder().setName('도움말').setDescription('도움말 확인하기'),
   new SlashCommandBuilder()
   .setName('거래내역')
   .setDescription('최근 7일간 거래 내역을 확인합니다.'),
@@ -155,7 +156,7 @@ client.on('interactionCreate', async interaction => {
       case '거래내역':
         await handleRecords(interaction);
         break;
-      case 'help':
+      case '도움말':
         await helpCommand(interaction);
         break;
 

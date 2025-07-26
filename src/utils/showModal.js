@@ -44,6 +44,7 @@ async function showSlModal(interaction) {
 
 async function saveTpFromModal(interaction) {
     const userId = interaction.user.id;
+    const guildId = interaction.guild.id;
     const input = interaction.fields.getTextInputValue('tp_input');
     const tp = parseFloat(input);
 
@@ -51,12 +52,12 @@ async function saveTpFromModal(interaction) {
         return interaction.reply({ content: '❌ 숫자만 입력해주세요.', ephemeral: true });
     }
 
-    const pos = getPosition(userId);
+    const pos = getPosition(guildId, userId);
     if (!pos) {
         return interaction.reply({ content: '❌ 포지션이 없습니다.', ephemeral: true });
     }
 
-    updatePosition(userId, { tp, sl: pos.sl });  // 기존 SL 유지
+    updatePosition(guildId, userId, { tp, sl: pos.sl });
 
     await interaction.reply({
         content: `🎯 목표가가 **${tp} USDT**로 저장되었습니다.`,
@@ -66,6 +67,7 @@ async function saveTpFromModal(interaction) {
 
 async function saveSlFromModal(interaction) {
     const userId = interaction.user.id;
+    const guildId = interaction.guild.id;
     const input = interaction.fields.getTextInputValue('sl_input');
     const sl = parseFloat(input);
 
@@ -73,12 +75,12 @@ async function saveSlFromModal(interaction) {
         return interaction.reply({ content: '❌ 숫자만 입력해주세요.', ephemeral: true });
     }
 
-    const pos = getPosition(userId);
+    const pos = getPosition(guildId, userId);
     if (!pos) {
         return interaction.reply({ content: '❌ 포지션이 없습니다.', ephemeral: true });
     }
 
-    updatePosition(userId, { tp: pos.tp, sl });  // 기존 TP 유지
+    updatePosition(guildId, userId, { tp: pos.tp, sl });
 
     await interaction.reply({
         content: `🛑 손절가가 **${sl} USDT**로 저장되었습니다.`,

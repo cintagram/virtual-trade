@@ -16,8 +16,9 @@ const {
 
 async function handleSell(interaction) {
   const userId = interaction.user.id;
+  const guildId = interaction.guild.id;
   const symbol = interaction.options.getString('코인');
-  const usdtAmount = interaction.options.getNumber('usdt');  // 변경
+  const usdtAmount = interaction.options.getNumber('usdt');
   const leverage = interaction.options.getInteger('레버리지') || 5;
 
   if (leverage < 1 || leverage > 500) {
@@ -31,19 +32,17 @@ async function handleSell(interaction) {
   }
 
   const price = await fetchPrice(symbol);
-  const wallet = getWallet(userId);
+  const wallet = getWallet(guildId, userId);
   const amount = (usdtAmount * leverage) / price;
   const cost = usdtAmount;
-
 
   if (wallet.balance < cost) {
     await interaction.reply({ embeds: [createEmbed('❌ 잔고 부족', `잔고: ${wallet.balance.toFixed(2)} USDT, 필요한 금액: ${cost.toFixed(2)} USDT`)] });
     return;
   }
 
-  updateWallet(userId, wallet.balance - cost);
-
-  setPosition(userId, {
+  updateWallet(guildId, userId, wallet.balance - cost);
+  setPosition(guildId, userId, {
     symbol,
     type: 'SHORT',
     entry: price,
@@ -51,7 +50,7 @@ async function handleSell(interaction) {
     leverage
   });
 
-  const pos = getPosition(userId);
+  const pos = getPosition(guildId, userId);
   const currentPrice = price;
   const pnl = pos.type === 'LONG'
     ? (currentPrice - pos.entry) * pos.amount * pos.leverage

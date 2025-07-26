@@ -4,8 +4,12 @@ const { createEmbed } = require('../utils/embed');
 const ADMIN_USER_ID = '1129696291631419432';
 
 async function handleRecharge(interaction) {
-  if (interaction.user.id !== ADMIN_USER_ID) {
-    await interaction.reply({ embeds: [createEmbed('권한 없음', '이 명령어를 사용할 권한이 없습니다.')], ephemeral: true });
+  const guildId = interaction.guild.id;
+  if (!interaction.member.permissions.has('Administrator')) {
+    await interaction.reply({
+      embeds: [createEmbed('권한 없음', '이 명령어를 사용할 권한이 없습니다.')],
+      ephemeral: true,
+    });
     return;
   }
 
@@ -17,9 +21,9 @@ async function handleRecharge(interaction) {
     return;
   }
 
-  const wallet = getWallet(targetUser.id);
+  const wallet = getWallet(guildId, targetUser.id);
   const newBalance = wallet.balance + amount;
-  updateWallet(targetUser.id, newBalance);
+  updateWallet(guildId, targetUser.id, newBalance);
 
   await interaction.reply({
     embeds: [createEmbed('충전 완료', `${targetUser.tag} 님의 지갑에 ${amount.toFixed(2)} USDT가 충전되었습니다.\n잔고: ${newBalance.toFixed(2)} USDT`)],

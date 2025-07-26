@@ -2,13 +2,13 @@ const { getPosition, deletePosition, updateWallet, getWallet, logTrade } = requi
 const { fetchPrice } = require('../utils/fetchPrice');
 const { applyFee } = require('../utils/fee');
 
-async function liquidatePosition(client, userId, reason) {
-    const pos = getPosition(userId);
+async function liquidatePosition(client, guildId, userId, reason) {
+    const pos = getPosition(guildId, userId);
     if (!pos) return;
 
     const currentPrice = await fetchPrice(pos.symbol);
 
-    const wallet = getWallet(userId);
+    const wallet = getWallet(guildId, userId);
     const entryCost = pos.amount * pos.entry / pos.leverage;
     let pnl = 0;
 
@@ -20,8 +20,9 @@ async function liquidatePosition(client, userId, reason) {
 
     const netPnl = await applyFee(userId, pnl);
     const newBalance = wallet.balance + entryCost + netPnl;
-    updateWallet(userId, newBalance);
+    updateWallet(guildId, userId, newBalance);
     await logTrade({
+    guildId,
     userId,
     symbol: pos.symbol,
     type: pos.type,
@@ -32,12 +33,21 @@ async function liquidatePosition(client, userId, reason) {
     pnl,
     timestamp: Math.floor(Date.now() / 1000)
 });
-    deletePosition(userId);
+    deletePosition(guildId, userId);
 
     const user = await client.users.fetch(userId);
-    await user.send(`💸 포지션 자동 청산!\n${reason}\n손익: ${pnl.toFixed(2)} USDT\n잔고: ${newBalance.toFixed(2)} USDT`);
+    const guild = await client.guilds.fetch(guildId);
+    const guildName = guild?.name || '알 수 없는 서버';
 
-    console.log(`[청산] ${userId} ${pos.symbol} ${pos.type} | ${reason} | PNL: ${pnl.toFixed(2)}`);
+    await user.send(
+        `💸 포지션 자동 청산!\n` +
+        `서버: **${guildName}**\n` +
+        `${reason}\n` +
+        `손익: ${pnl.toFixed(2)} USDT\n` +
+        `잔고: ${newBalance.toFixed(2)} USDT`
+    );
+
+    console.log(`[청산] ${userId} | 서버: ${guildName} | ${pos.symbol} ${pos.type} | ${reason} | PNL: ${pnl.toFixed(2)}`);
 }
 
 module.exports = { liquidatePosition };

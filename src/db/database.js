@@ -55,7 +55,7 @@ function getWallet(guildId, userId) {
   let row = db.prepare(`SELECT * FROM wallets WHERE guildId = ? AND userId = ?`).get(guildId, userId);
   if (!row) {
     db.prepare(`INSERT INTO wallets (guildId, userId, balance) VALUES (?, ?, 10000)`).run(guildId, userId);
-    row = { guildId, userId, balance: 10000 };
+    row = { guildId, userId, balance: 100 };
   }
   return row;
 }

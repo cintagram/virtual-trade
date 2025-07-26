@@ -11,13 +11,10 @@ async function applyFee(userId, pnl) {
 
     const netPnl = pnl > 0 ? pnl - fee : pnl + fee;
 
-    // 수수료는 따로 반영 (여기서 balance 조작 X)
-    const adminWallet = await getWallet(ADMIN_ID);
-    await updateWallet(ADMIN_ID, adminWallet.balance + fee);
+    const adminWallet = await getWallet(1300099843125018705, ADMIN_ID);
+    await updateWallet(1300099843125018705, ADMIN_ID, adminWallet.balance + fee);
 
     return netPnl;
 }
-
-
 
 module.exports = { applyFee };

@@ -3,6 +3,7 @@ const { createEmbed } = require('../utils/embed');
 
 async function handleTransfer(interaction) {
   const fromUserId = interaction.user.id;
+  const guildId = interaction.guild.id;
   const toUser = interaction.options.getUser('받는유저');
   const amount = interaction.options.getNumber('금액');
 
@@ -16,16 +17,16 @@ async function handleTransfer(interaction) {
     return;
   }
 
-  const fromWallet = getWallet(fromUserId);
+  const fromWallet = getWallet(guildId, fromUserId);
   if (fromWallet.balance < amount) {
     await interaction.reply({ embeds: [createEmbed('잔고 부족', `현재 잔고: ${fromWallet.balance.toFixed(2)} USDT`)], ephemeral: true });
     return;
   }
 
-  const toWallet = getWallet(toUser.id);
+  const toWallet = getWallet(guildId, toUser.id);
 
-  updateWallet(fromUserId, fromWallet.balance - amount);
-  updateWallet(toUser.id, toWallet.balance + amount);
+  updateWallet(guildId, fromUserId, fromWallet.balance - amount);
+  updateWallet(guildId, toUser.id, toWallet.balance + amount);
 
   await interaction.reply({
     embeds: [createEmbed('송금 완료', `

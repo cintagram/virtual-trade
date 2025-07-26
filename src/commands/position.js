@@ -14,7 +14,8 @@ const {
 
 async function handlePosition(interaction, refresh = false) {
   const userId = interaction.user.id;
-  const pos = getPosition(userId);
+  const guildId = interaction.guild.id;
+  const pos = getPosition(guildId, userId);
 
   if (!pos) {
     await interaction.reply({

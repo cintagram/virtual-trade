@@ -4,17 +4,17 @@ const { formatDate } = require('../utils/date');
 
 async function handleRecords(interaction, fromWallet = false) {
   const userId = interaction.user.id;
-
+  const guildId = interaction.guild.id;
   const results = db.prepare(`
     SELECT * FROM trades
-    WHERE user_id = ?
+    WHERE user_id = ? AND guild_id = ?
     ORDER BY timestamp DESC
     LIMIT 7
-  `).all(userId);
+  `).all(userId, guildId);
 
   if (results.length === 0) {
     return interaction.reply({
-      content: '최근 7일간의 거래 내역이 없습니다.',
+      content: '최근 거래 내역이 없습니다.',
       ephemeral: true,
     });
   }
