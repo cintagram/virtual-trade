@@ -24,9 +24,9 @@ async function helpCommand(interaction) {
         new TextDisplayBuilder()
           .setContent(
             `## 🔑 **시작은 간단해요**\n` +
-            `• /지갑 — 지갑 생성 및 초기 자산 지급\n` +
-            `• /매수 — 원하는 코인 롱 진입\n` +
-            `• /매도 — 원하는 코인 숏 진입`
+            `\`/지갑\` — 지갑 생성 및 초기 자산 지급\n` +
+            `\`/매수\` — 원하는 코인 롱 진입\n` +
+            `\`/매도\` — 원하는 코인 숏 진입`
           )
       )
       .addSeparatorComponents(

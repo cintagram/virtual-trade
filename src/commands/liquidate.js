@@ -4,13 +4,18 @@ const { createEmbed } = require('../utils/embed');
 const { applyFee } = require('../utils/fee');
 const {
   ContainerBuilder,
+  SectionBuilder,
   TextDisplayBuilder,
+  ButtonBuilder,
+  ButtonStyle,
   SeparatorBuilder,
   SeparatorSpacingSize,
-  MessageFlags
+  MessageFlags,
+  ActionRowBuilder  
 } = require('discord.js');
 
 async function handleLiquidate(interaction) {
+  // 버튼 인터랙션일 때도 대응하도록 수정
   if (!interaction.user) {
     await interaction.reply({ embeds: [createEmbed('오류', '사용자 정보를 찾을 수 없습니다.')] });
     return;
@@ -18,10 +23,10 @@ async function handleLiquidate(interaction) {
 
   const userId = interaction.user.id;
   const guildId = interaction.guild.id;
-  const pos = getPosition(userId);
+  const pos = getPosition(guildId, userId);
 
   if (!pos) {
-    await interaction.reply({ embeds: [createEmbed('포지션 없음', '현재 서버에서 보유 중인 포지션이 없습니다.')], ephemeral: true });
+    await interaction.reply({ embeds: [createEmbed('포지션 없음', '현재 보유 중인 포지션이 없습니다.')], ephemeral: true });
     return;
   }
 
@@ -38,7 +43,9 @@ async function handleLiquidate(interaction) {
   }
     
   const netPnl = await applyFee(userId, pnl);
+  console.log(entryCost, netPnl);
   const newBalance = wallet.balance + entryCost + netPnl;
+  console.log(newBalance);
   updateWallet(guildId, userId, newBalance);
   await logTrade({
     guildId,

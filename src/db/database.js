@@ -103,7 +103,7 @@ function setAttendanceToday(guildId, userId, todayDate) {
 
 function logTrade(tradeData) {
   const {
-    guildId,  // 추가됨
+    guildId,
     userId,
     symbol,
     type,

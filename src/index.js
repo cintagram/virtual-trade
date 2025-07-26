@@ -23,6 +23,7 @@ const { handleTransfer } = require('./commands/transfer');
 const { handleAttendance } = require('./commands/attendance');
 const { handleRecords } = require('./commands/records');
 const { helpCommand } = require('./commands/help');
+const { leaderboard } = require('./commands/leaderboard');
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
@@ -107,6 +108,9 @@ const commands = [
   new SlashCommandBuilder().setName('포지션').setDescription('현재 내 포지션 확인'),
   new SlashCommandBuilder().setName('도움말').setDescription('도움말 확인하기'),
   new SlashCommandBuilder()
+    .setName('리더보드')
+    .setDescription('서버 내 가상 자산 보유량 리더보드를 보여줍니다.'),
+  new SlashCommandBuilder()
   .setName('거래내역')
   .setDescription('최근 7일간 거래 내역을 확인합니다.'),
 
@@ -158,6 +162,9 @@ client.on('interactionCreate', async interaction => {
         break;
       case '도움말':
         await helpCommand(interaction);
+        break;
+      case '리더보드':
+        await leaderboard(interaction);
         break;
 
     }
